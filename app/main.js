@@ -19,6 +19,9 @@ var lastRoll = 0;
 // isGrabbing: Is the player's hand currently in a grabbing pose
 var isGrabbing = false;
 
+// cursorPosition initial param for filtering
+var cursorPosition = [0, 0, 0];
+
 // MAIN GAME LOOP
 // Called every time the Leap provides a new frame of data
 Leap.loop({ hand: function(hand) {
@@ -30,7 +33,10 @@ Leap.loop({ hand: function(hand) {
   var leapPosition = hand.screenPosition();
   var y_offset = 300;
   var roll = (lastRoll + hand.roll())/2.0;
-  var cursorPosition = [leapPosition[0], leapPosition[1] + y_offset, leapPosition[2]]; // offset y coordinate
+
+  var newCursorPosition = [leapPosition[0], leapPosition[1] + y_offset, leapPosition[2]]; // offset y coordinate
+  // very simple filter to smooth wiggle
+  cursorPosition = [(cursorPosition[0] + newCursorPosition[0])/2, (cursorPosition[1] + newCursorPosition[1])/2, (cursorPosition[2] + newCursorPosition[2])/2];
   cursor.setScreenPosition(cursorPosition);
 
   // 4.1
@@ -135,8 +141,10 @@ Leap.loop({ hand: function(hand) {
 var processSpeech = function(transcript) {
   // Helper function to detect if any commands appear in a string
   var userSaid = function(str, commands) {
+    str = str.toLowerCase();
     for (var i = 0; i < commands.length; i++) {
-      if (str.indexOf(commands[i]) > -1)
+      var testWord = commands[i].toLowerCase();
+      if (str.indexOf(testWord) > -1)
         return true;
     }
     return false;
@@ -172,13 +180,13 @@ var processSpeech = function(transcript) {
       if (userSaid(transcript, ['hit'])) {
         response = "hit";
         processed = true;
-      } else if (userSaid(transcript, ['Miss'])) {
+      } else if (userSaid(transcript, ['miss'])) {
         response = "miss";
         processed = true;
-      } else if (userSaid(transcript, ['sunk'])) {
+      } else if (userSaid(transcript, ['sunk', 'you sunk', 'sunk my'])) {
         response = "sunk";
         processed = true;
-      } else if (userSaid(transcript, ['game', 'over'])) {
+      } else if (userSaid(transcript, ['game over', 'game', 'over'])) {
         response = "game over";
         processed = true;
       }
