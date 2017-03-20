@@ -63,7 +63,7 @@ Leap.loop({ hand: function(hand) {
       if (info) {
         grabbedShip = info.ship;
         grabbedOffset = info.offset;
-	grabbedRollOffset = roll;
+	      grabbedRollOffset = roll;
         console.log(grabbedShip);
         console.log(grabbedOffset);
         console.log(cursorPosition);
@@ -157,7 +157,16 @@ var processSpeech = function(transcript) {
     if (userSaid(transcript, ['start'])) {
       gameState.startGame();
       processed = true;
-      console.log("HERE WE GO");
+    }
+
+    // place battleship on voice command at selected tile
+    if (userSaid(transcript, ['battleship', 'battle', 'ship'])) {
+      vocallyPlaceShip(getBattleship(playerBoard), selectedTile);
+    }
+
+    // place patrol boat on voice command at selected tile
+    if (userSaid(transcript, ['patrol boat', 'patrol', 'boat'])) {
+      vocallyPlaceShip(getPatrolBoat(playerBoard), selectedTile);
     }
   }
 

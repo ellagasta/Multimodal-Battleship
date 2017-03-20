@@ -125,6 +125,43 @@ var nextTurn = function() {
   setTimeout(gameState.nextTurn, TURNDELAY);
 };
 
+var getBattleship = function(board) {
+  var battleship;
+  board.get('ships').forEach(function(ship) {
+    if (ship.get('type') == "battleship") {
+      battleship = ship;
+    }
+  });
+};
+
+var getPatrolBoat = function(board) {
+  var boat;
+  board.get('ships').forEach(function(ship) {
+    if (ship.get('type') == "patrolBoat") {
+      boat = ship;
+    }
+  });
+};
+
+// Deploys a ship to the player board based on the currently selected tile
+// currently horizontal placement only, puts left corner of ship in selected tile
+var vocallyPlaceShip = function(ship, selectedTile) {
+  if (!selectedTile) {
+    ship.resetShip();
+    return;
+  }
+  ship.setBoardPosition(selectedTile);
+
+  // Snap to grid
+  var snappedPosition = getSnappedScreenPosition(selectedTile);
+  ship.setScreenPosition(snappedPosition);
+
+  // Try deploying ship
+  var success = playerBoard.deployShip(ship);
+  if (! success)
+    ship.resetShip();
+};
+
 // placeShip(ship)
 //    Deploys a ship to the player board, based on its current screen position
 var placeShip = function(ship) {
@@ -147,7 +184,7 @@ var placeShip = function(ship) {
   // Snap to grid
   var snappedPosition = getSnappedScreenPosition(boardPosition);
   ship.setScreenPosition(snappedPosition);
-  
+
   // Try deploying ship
   var success = playerBoard.deployShip(ship);
   if (! success)
