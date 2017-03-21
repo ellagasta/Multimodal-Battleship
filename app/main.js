@@ -19,6 +19,11 @@ var lastRoll = 0;
 // isGrabbing: Is the player's hand currently in a grabbing pose
 var isGrabbing = false;
 
+// hasCheated: Has the player cheated before
+var hasCheated = false;
+// cheatingPenalty: Is the player being punished for multiple cheating instances
+var cheatingPenalty = false;
+
 // cursorPosition initial param for filtering
 var cursorPosition = [0, 0, 0];
 
@@ -288,6 +293,17 @@ var registerCpuShot = function(playerResponse) {
 
   // TODO: Generate CPU feedback in three cases
   // Game over
+  if (!isPlayerTruthful(playerResponse, result)){
+    if (hasCheated) {
+      if (!cheatingPenalty){
+        generateSpeech("Alright, that's it. No more moves for you!");
+        cheatingPenalty = true;
+      }
+    } else {
+      generateSpeech("You're cheating. I can tell. I won't let you off next time");
+      hasCheated = true;
+    }
+  }
   if (result.isGameOver) {
     generateSpeech("I Win!");
     gameState.endGame("cpu");
@@ -304,12 +320,15 @@ var registerCpuShot = function(playerResponse) {
     if (isHit) {
       generateSpeech("Got you!");
     } else {
-      generateSpeech("You're safe this time.");
+      generateSpeech("Drat, you're safe this time.");
     }
   }
 
   if (!result.isGameOver) {
     // TODO: Uncomment nextTurn to move onto the player's next turn
-    // nextTurn();
+    nextTurn();
+    if (cheatingPenalty) {
+      nextTurn();
+    }
   }
 };

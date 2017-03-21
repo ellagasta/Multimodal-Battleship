@@ -197,3 +197,23 @@ var getSnappedScreenPosition = function(boardPosition) {
   screenPosition[1] += boardPosition.row * TILESIZE;
   return screenPosition;
 };
+
+var isPlayerTruthful = function(playerResponse, shotResult){
+  if (shotResult.isGameover){
+    if (playerResponse !== "game over"){
+    return false;
+    }
+  }
+  else if (shotResult.sunkShip) {
+    if (playerResponse !== "sunk"){
+    return false;
+    }
+  }
+  else {
+    var isHit = shotResult.shot.get('isHit');
+    if (isHit && (playerResponse !== "hit") || !isHit && (playerResponse !== "miss")){
+      return false
+    }
+  }
+  return true;
+};
