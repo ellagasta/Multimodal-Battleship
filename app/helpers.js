@@ -12,7 +12,7 @@ var generateSpeech = function(message, callback) {
     var msg = new SpeechSynthesisUtterance();
     msg.voice = window.speechSynthesis.getVoices()[VOICEINDEX];
     msg.text = message;
-    msg.rate = 0.2;
+    msg.rate = 1.0;
     if (typeof callback !== "undefined")
       msg.onend = callback;
     speechSynthesis.speak(msg);
@@ -132,6 +132,7 @@ var getBattleship = function(board) {
       battleship = ship;
     }
   });
+  return battleship;
 };
 
 var getPatrolBoat = function(board) {
@@ -141,6 +142,7 @@ var getPatrolBoat = function(board) {
       boat = ship;
     }
   });
+  return boat;
 };
 
 // Deploys a ship to the player board based on the currently selected tile
