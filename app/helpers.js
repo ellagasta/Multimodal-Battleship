@@ -148,6 +148,7 @@ var getPatrolBoat = function(board) {
 // Deploys a ship to the player board based on the currently selected tile
 // currently horizontal placement only, puts left corner of ship in selected tile
 var vocallyPlaceShip = function(ship, selectedTile) {
+  ship.snapRotation();
   if (!selectedTile) {
     ship.resetShip();
     return;
