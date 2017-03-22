@@ -166,12 +166,22 @@ var processSpeech = function(transcript) {
 
     // place battleship on voice command at selected tile
     if (userSaid(transcript, ['battleship', 'battle', 'ship'])) {
-      vocallyPlaceShip(getBattleship(playerBoard), selectedTile);
+      var battleship = getBattleship(playerBoard);
+      if (userSaid(transcript, ['rotate']) && battleship.get('isDeployed')) {
+        var rotated = battleship.get('isVertical');
+        battleship.set('isVertical', !rotated);
+      }
+      vocallyPlaceShip(battleship, selectedTile);
     }
 
     // place patrol boat on voice command at selected tile
     if (userSaid(transcript, ['patrol boat', 'patrol', 'boat'])) {
-      vocallyPlaceShip(getPatrolBoat(playerBoard), selectedTile);
+      var boat = getPatrolBoat(playerBoard);
+      if (userSaid(transcript, ['rotate']) && boat.get('isDeployed')) {
+        var rotated = boat.get('isVertical');
+        boat.set('isVertical', !rotated);
+      }
+      vocallyPlaceShip(boat, selectedTile);
     }
   }
 
